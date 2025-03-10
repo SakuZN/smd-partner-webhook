@@ -36,7 +36,11 @@ function logDiscord(
 
     // Format original total amount breakdown if available
     let breakdownStr = 'N/A';
-    if (transaction.original_total_amount.breakdown) {
+    let originalValue = 'N/A';
+    if (transaction.original_total_amount && transaction.original_total_amount.breakdown) {
+        if (transaction.original_total_amount.value) {
+            originalValue = `${transaction.original_total_amount.value} ${transaction.original_total_amount?.currency || 'N/A'}`;
+        }
         const { subtotal, service_charge, shipping_fee, discount } = transaction.original_total_amount.breakdown;
         breakdownStr = `Subtotal: ${subtotal}` +
             (service_charge ? `\nService Charge: ${service_charge}` : '') +
@@ -85,7 +89,7 @@ function logDiscord(
                     { name: "Partner Ref ID", value: transaction.partner_ref_id, inline: true },
                     {
                         name: "Original Total Amount",
-                        value: `${transaction.original_total_amount.value} ${transaction.original_total_amount.currency}`,
+                        value: originalValue,
                         inline: false
                     },
                     { name: "Amount Breakdown", value: breakdownStr, inline: false },
